@@ -285,6 +285,41 @@ const buildTags = (config: BuildTagsParams) => {
             );
           });
         }
+      } else if (type === 'product' && config.openGraph.product) {
+        if (config.openGraph.product.plural_title) {
+          tagsToRender.push(
+            <meta
+              key="product:plural_title"
+              property="product:plural_title"
+              content={config.openGraph.product.plural_title}
+            />,
+          );
+        }
+
+        if (
+          config.openGraph.product.prices &&
+          config.openGraph.product.prices.length
+        ) {
+          config.openGraph.product.prices.forEach((price, index) => {
+            if(price.amount && price.currency){
+              tagsToRender.push(
+                <meta
+                  key={`product:price:amount:0${index}`}
+                  property="product:price:amount"
+                  content={price.amount}
+                />,
+              );
+              tagsToRender.push(
+                <meta
+                  key={`product:price:currency:0${index}`}
+                  property="product:price:currency"
+                  content={price.currency}
+                />,
+              );
+            }
+          });
+        }
+        
       } else if (
         (type === 'video.movie' ||
           type === 'video.episode' ||
