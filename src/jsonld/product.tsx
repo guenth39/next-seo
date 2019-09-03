@@ -18,7 +18,14 @@ type Review = {
   reviewRating: ReviewRating;
 };
 
-type Offers = {
+type AggregateOffer = {
+  lowPrice: string;
+  priceCurrency: string;
+  highPrice?: string;
+  offerCount?: string;
+};
+
+type Offer = {
   price: string;
   priceCurrency: string;
   priceValidUntil?: string;
@@ -28,6 +35,8 @@ type Offers = {
     name: string;
   };
 };
+
+type Offers = AggregateOffer | Offer;
 
 type AggregateRating = {
   ratingValue: string;
@@ -93,30 +102,55 @@ const buildAggregateRating = (aggregateRating: AggregateRating) => `
 
 // TODO: Docs for offers itemCondition & availability
 // TODO: Seller type, make dynamic
-const buildOffers = (offers: Offers) => `
+const buildOffer = (offer: Offer) => `
   "offers": {
     "@type": "Offer",
-    "priceCurrency": "${offers.priceCurrency}",
+    "priceCurrency": "${offer.priceCurrency}",
     ${
-      offers.priceValidUntil
-        ? `"priceValidUntil": "${offers.priceValidUntil}",`
+      offer.priceValidUntil
+        ? `"priceValidUntil": "${offer.priceValidUntil}",`
         : ''
     }
-    ${offers.itemCondition ? `"itemCondition": "${offers.itemCondition}",` : ''}
-    ${offers.availability ? `"availability": "${offers.availability}",` : ''}
+    ${offer.itemCondition ? `"itemCondition": "${offer.itemCondition}",` : ''}
+    ${offer.availability ? `"availability": "${offer.availability}",` : ''}
     ${
-      offers.seller
+      offer.seller
         ? `
       "seller": {
       "@type": "Organization",
-      "name": "${offers.seller.name}"
+      "name": "${offer.seller.name}"
     },
     `
         : ''
     }
-    "price": "${offers.price}"
+    "price": "${offer.price}"
   },
 `;
+
+const buildAggregateOffer = (aggregateOffer: AggregateOffer) => `
+  "offers": {
+      "@type": "AggregateOffer",
+      "lowPrice": "${aggregateOffer.lowPrice}",
+      "priceCurrency": "${aggregateOffer.priceCurrency}",
+      ${
+        aggregateOffer.offerCount
+          ? `"offerCount": "${aggregateOffer.offerCount}",`
+          : ''
+      }
+      ${
+        aggregateOffer.highPrice
+          ? `"highPrice": "${aggregateOffer.highPrice}",`
+          : ''
+      }
+    },
+`;
+
+function isAggregateOffer(offers: Offers): offers is AggregateOffer {
+  return (offers as AggregateOffer).lowPrice !== undefined;
+}
+
+const buildOffers = (offers: Offers) =>
+  isAggregateOffer(offers) ? buildAggregateOffer(offers) : buildOffer(offers);
 
 const ProductJsonLd: FC<ProductJsonLdProps> = ({
   productName,
