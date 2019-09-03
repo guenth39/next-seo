@@ -36,6 +36,7 @@ Version One docs can be found [here](https://github.com/garmeeh/next-seo/tree/su
     - [Article](#article)
     - [Book](#book)
     - [Profile](#profile)
+    - [Product](#product)
 - [JSON-LD](#json-ld)
   - [Article](#article-1)
   - [Breadcrumb](#breadcrumb)
@@ -44,7 +45,7 @@ Version One docs can be found [here](https://github.com/garmeeh/next-seo/tree/su
   - [Corporate Contact](#corporate-contact)
   - [Local Business](#local-business)
   - [Logo](#logo)
-  - [Product](#product)
+  - [Product](#product-1)
   - [Social Profile](#social-profile)
 - [CHANGELOG](#changelog)
 - [Contributors](#contributors)
@@ -233,6 +234,9 @@ From now on all of your pages will have the defaults above applied applied.
 | `openGraph.article.authors`        | string[]                | Writers of the article.                                                                                                                                                              |
 | `openGraph.article.section`        | string                  | A high-level section name. E.g. Technology                                                                                                                                           |
 | `openGraph.article.tags`           | string[]                | Tag words associated with this article.                                                                                                                                              |
+| `openGraph.product.plural_title`   | string                  | Title of the product when a quantity more than 1 is purchased.                                                                                                                       |
+| `openGraph.product.price.amount`   | string                  | A decimal number with a '.' as the decimal separator. Values less than 0.01 are not supported.                                                                                       |
+| `openGraph.product.price.currency` | string                  | Currency is a string representing the ISO-4217-3 currency code.                                                                                                                      |
 
 ### Additional DefaultSEO Options
 
@@ -382,6 +386,7 @@ Next SEO currently supports:
 - [article](#article)
 - [book](#book)
 - [profile](#profile)
+- [product](#product)
 
 ### Open Graph Examples
 
@@ -690,6 +695,65 @@ export default () => (
       }}
     />
     <p>Profile</p>
+  </>
+);
+```
+
+**Note**
+
+Multiple images is only available in version `7.0.0-canary.0`+
+
+For versions `6.0.0` - `7.0.0-canary.0` you just need to supply a single item array:
+
+```js
+images: [
+  {
+    url: 'https://www.example.ie/og-image-01.jpg',
+    width: 800,
+    height: 600,
+    alt: 'Og Image Alt',
+  },
+],
+```
+
+#### Product
+
+```jsx
+import React from 'react';
+import { NextSeo } from 'next-seo';
+
+export default () => (
+  <>
+    <NextSeo
+      openGraph={{
+        title: 'Open Graph Product Title',
+        description: 'Description of open graph product',
+        url: 'https://www.example.com/television',
+        type: 'product',
+        product: {
+          plural_title: 'Plural Title of the Product',
+          prices: [
+            {
+              amount: 499.99,
+              currency: 'EUR',
+            },
+            {
+              amount: 547.61,
+              currency: 'USD',
+            },
+          ],
+        },
+        images: [
+          {
+            url: 'https://www.test.ie/images/profile.jpg',
+            width: 850,
+            height: 650,
+            alt: 'Profile Photo',
+          },
+        ],
+      }}
+    />
+    <p>Product</p>
   </>
 );
 ```
@@ -1061,6 +1125,17 @@ Valid values fro `offers.availability`:
 - https://schema.org/PreOrder
 - https://schema.org/PreSale
 - https://schema.org/SoldOut
+
+Alternative for on offer you can add a aggregate Offer in offers. Than offers look like this:
+
+```
+offers={{
+  lowPrice: '119.99',
+  highPrice: '299',
+  priceCurrency: 'USD',
+  offerCount: '3',
+}}
+```
 
 More info on the product data type can be found [here](https://developers.google.com/search/docs/data-types/product).
 
