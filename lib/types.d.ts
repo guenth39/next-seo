@@ -28,6 +28,7 @@ export interface OpenGraph {
   profile?: OpenGraphProfile;
   book?: OpenGraphBook;
   article?: OpenGraphArticle;
+  product?: OpenGraphProduct;
   video?: OpenGraphVideo;
 }
 export interface OpenGraphProfile {
@@ -49,6 +50,14 @@ export interface OpenGraphArticle {
   authors?: ReadonlyArray<string>;
   section?: string;
   tags?: ReadonlyArray<string>;
+}
+export interface OpenGraphProduct {
+  plural_title?: string;
+  prices?: ReadonlyArray<Price>;
+}
+export interface Price {
+  amount?: string;
+  currency?: string;
 }
 export interface OpenGraphVideo {
   actors?: ReadonlyArray<OpenGraphVideoActors>;
